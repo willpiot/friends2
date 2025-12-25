@@ -110,24 +110,37 @@ struct PreferencesView: View {
                     Label("Age Range", systemImage: "person.2")
                         .font(.headline)
                     
-                    HStack {
-                        Text("\(minAge)")
-                            .frame(width: 40)
-                        Slider(value: Binding(
-                            get: { Double(minAge) },
-                            set: { minAge = Int($0) }
-                        ), in: 18...60, step: 1)
-                        Text("\(maxAge)")
-                            .frame(width: 40)
+                    VStack(spacing: 16) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Minimum Age: \(minAge)")
+                                .font(.subheadline)
+                            Slider(value: Binding(
+                                get: { Double(minAge) },
+                                set: { 
+                                    minAge = Int($0)
+                                    // Ensure max is always >= min
+                                    if maxAge < minAge {
+                                        maxAge = minAge
+                                    }
+                                }
+                            ), in: 18...60, step: 1)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Maximum Age: \(maxAge)")
+                                .font(.subheadline)
+                            Slider(value: Binding(
+                                get: { Double(maxAge) },
+                                set: { 
+                                    maxAge = Int($0)
+                                    // Ensure min is always <= max
+                                    if minAge > maxAge {
+                                        minAge = maxAge
+                                    }
+                                }
+                            ), in: 18...60, step: 1)
+                        }
                     }
-                    
-                    HStack {
-                        Text("Min: \(minAge)")
-                        Spacer()
-                        Text("Max: \(maxAge)")
-                    }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
                 }
                 .padding()
                 .background(Color(.systemGray6))

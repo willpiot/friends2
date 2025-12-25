@@ -24,27 +24,31 @@ struct MatchingService {
                 let weight1 = Double(answer1.response.weight)
                 let weight2 = Double(answer2.response.weight)
                 
+                // Use the minimum weight to ensure both users care about the question
+                // This prevents extreme responses from dominating the score
+                let questionWeight = min(weight1, weight2)
+                
                 // Calculate similarity for this question
                 let difference = abs(answer1.response.rawValue - answer2.response.rawValue)
                 
                 // If answers match exactly, add full weight
                 if difference == 0 {
-                    totalScore += max(weight1, weight2)
+                    totalScore += questionWeight
                 }
                 // If answers are adjacent (e.g., Agree and Strongly Agree), add partial credit
                 else if difference == 1 {
-                    totalScore += max(weight1, weight2) * 0.75
+                    totalScore += questionWeight * 0.75
                 }
                 // If answers are 2 steps apart (e.g., Neutral and Strongly Agree), add some credit
                 else if difference == 2 {
-                    totalScore += max(weight1, weight2) * 0.5
+                    totalScore += questionWeight * 0.5
                 }
                 // If answers are 3+ steps apart, minimal credit
                 else {
-                    totalScore += max(weight1, weight2) * 0.25
+                    totalScore += questionWeight * 0.25
                 }
                 
-                maxPossibleScore += max(weight1, weight2)
+                maxPossibleScore += questionWeight
             }
         }
         
